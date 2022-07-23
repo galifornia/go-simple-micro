@@ -62,7 +62,6 @@ func openDB(dsn string) (*sql.DB, error) {
 
 func connectToDB() *sql.DB {
 	dsn := os.Getenv("DSN")
-	log.Println(dsn)
 	count := 0
 
 	for count < TRIES {
