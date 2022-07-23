@@ -24,7 +24,6 @@ type Config struct {
 
 func main() {
 	log.Println("Starting authentication service")
-
 	conn := connectToDB()
 	if conn == nil {
 		log.Panic("Unable to connect to database")
@@ -63,9 +62,10 @@ func openDB(dsn string) (*sql.DB, error) {
 
 func connectToDB() *sql.DB {
 	dsn := os.Getenv("DSN")
+	log.Println(dsn)
 	count := 0
 
-	for TRIES < count {
+	for count < TRIES {
 		connection, err := openDB(dsn)
 
 		if err != nil {

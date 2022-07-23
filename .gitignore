@@ -6,3 +6,9 @@
 # broker executable
 broker/brokerApp
 
+# auth executable
+auth/authApp
+
+# auth db
+db-data/
+
