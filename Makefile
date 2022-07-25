@@ -8,13 +8,20 @@ up:
 	docker-compose up -d
 	@echo "Docker images started!"
 
-## up_build: stops docker-compose (if running), builds all projects and starts docker compose
-up_build: build_broker build_auth
+## up_build: stops docker-compose (if running), builds all projects and starts docker compose and deletes binaries
+up_build: build_broker build_auth deploy clean_build
+
+deploy:
 	@echo "Stopping docker images (if running...)"
 	docker-compose down
 	@echo "Building (when required) and starting docker images..."
 	docker-compose up --build -d
 	@echo "Docker images built and started!"
+
+clean_build:
+	@echo "Cleaning build binaries"
+	rm ./auth/authApp
+	rm ./broker/brokerApp
 
 ## down: stop docker compose
 down:
