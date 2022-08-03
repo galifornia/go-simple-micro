@@ -1,6 +1,7 @@
 FRONT_END_BINARY=frontApp
 BROKER_BINARY=brokerApp
 AUTH_BINARY=authApp
+LOGGER_BINARY=loggerApp
 
 ## up: starts all containers in the background without forcing build
 up:
@@ -9,7 +10,7 @@ up:
 	@echo "Docker images started!"
 
 ## up_build: stops docker-compose (if running), builds all projects and starts docker compose and deletes binaries
-up_build: build_broker build_auth deploy clean_build
+up_build: build_broker build_auth build_logger deploy clean_build
 
 deploy:
 	@echo "Stopping docker images (if running...)"
@@ -22,6 +23,7 @@ clean_build:
 	@echo "Cleaning build binaries"
 	rm ./auth/authApp
 	rm ./broker/brokerApp
+	rm ./logger/loggerApp
 
 ## down: stop docker compose
 down:
@@ -39,6 +41,12 @@ build_broker:
 build_auth:
 	@echo "Building auth binary..."
 	cd ./auth && env GOOS=linux CGO_ENABLED=0 go build -o ${AUTH_BINARY} ./cmd/api
+	@echo "Done!"
+
+## build_logger: builds the logger binary as a linux executable
+build_logger:
+	@echo "Building logger binary..."
+	cd ./logger && env GOOS=linux CGO_ENABLED=0 go build -o ${LOGGER_BINARY} ./cmd/api
 	@echo "Done!"
 
 ## build_front: builds the front end binary
