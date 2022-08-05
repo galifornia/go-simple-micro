@@ -26,10 +26,18 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	for {
-		log.Println("Logger service")
-		time.Sleep(8 * time.Second)
-	}
+
+	client = mongoClient
+
+	// Create context
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	defer func() {
+		if err := client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
 }
 
 func connectToMongo() (*mongo.Client, error) {
@@ -37,7 +45,7 @@ func connectToMongo() (*mongo.Client, error) {
 
 	clientOptions.SetAuth(options.Credential{
 		Username: "admin",
-		Password: "password"
+		Password: "password",
 	})
 
 	conn, err := mongo.Connect(context.TODO(), clientOptions)
