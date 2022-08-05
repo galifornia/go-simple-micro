@@ -78,5 +78,6 @@ func connectToMongo() (*mongo.Client, error) {
 		return nil, err
 	}
 
+	log.Println("Connected to Mongo!!")
 	return conn, nil
 }
