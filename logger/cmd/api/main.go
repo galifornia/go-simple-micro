@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net/http"
 	"time"
 
+	"github.com/galifornia/go-micro-logger/data"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -19,6 +22,7 @@ const (
 var client *mongo.Client
 
 type Config struct {
+	Models data.Models
 }
 
 func main() {
@@ -38,6 +42,26 @@ func main() {
 			panic(err)
 		}
 	}()
+
+	app := Config{
+		Models: data.New(client),
+	}
+
+	// start web server
+	app.serve()
+}
+
+func (app *Config) serve() {
+	log.Println("Starting web server")
+	srv := http.Server{
+		Addr:    fmt.Sprintf(":%s", WEB_PORT),
+		Handler: app.routes(),
+	}
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Panic("Unable to start web server")
+	}
 }
 
 func connectToMongo() (*mongo.Client, error) {
