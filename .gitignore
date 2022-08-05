@@ -3,12 +3,10 @@
 
 .vscode/
 
-# broker executable
+# app executables
 broker/brokerApp
-
-# auth executable
 auth/authApp
+logger/loggerApp
 
 # auth db
 db-data/
-
