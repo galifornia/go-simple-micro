@@ -54,7 +54,7 @@ services:
   mongo:
     image: 'mongo:4.2.16-bionic'
     ports:
-      - "27017:27017"
+      - "27018:27017"
     restart: always
     deploy:
       mode: replicated

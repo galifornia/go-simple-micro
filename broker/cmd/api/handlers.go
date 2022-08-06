@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 )
 
@@ -23,7 +24,7 @@ type LoggerPayload struct {
 	Data string `json:"data"`
 }
 
-func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
+func (app *Config) broker(w http.ResponseWriter, r *http.Request) {
 	payload := jsonResponse{
 		Error:   false,
 		Message: "Hit the broker!!",
@@ -32,25 +33,27 @@ func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
 	_ = app.writeJSON(w, http.StatusOK, payload)
 }
 
-func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
+func (app *Config) handleSubmission(w http.ResponseWriter, r *http.Request) {
 	var payload RequestPayload
 
 	err := app.readJSON(w, r, &payload)
 	if err != nil {
 		app.errorJSON(w, err)
 	}
-
+	log.Println(payload)
 	switch payload.Action {
 	case "auth":
 		app.authenticate(w, payload.Auth)
 	case "logger":
-		app.log(w, payload.Logger)
+		app.logEntry(w, payload.Logger)
 	default:
 		app.errorJSON(w, errors.New("unknown action"))
 	}
 }
 
-func (app *Config) log(w http.ResponseWriter, entry LoggerPayload) {
+func (app *Config) logEntry(w http.ResponseWriter, entry LoggerPayload) {
+	log.Println(entry)
+	log.Println("carallo")
 	jsonData, _ := json.MarshalIndent(entry, "", "\t") // In production shoulld be Marshal wo Indent
 	logServiceURL := "http://logger-service/log"       // !FIXME: read config from env
 
@@ -70,7 +73,7 @@ func (app *Config) log(w http.ResponseWriter, entry LoggerPayload) {
 		return
 	}
 	defer response.Body.Close()
-
+	log.Println("ZZzzZZZ")
 	if response.StatusCode != http.StatusAccepted {
 		app.errorJSON(w, err)
 		return

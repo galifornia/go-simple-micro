@@ -46,8 +46,8 @@
     const payload = {
             action: "logger",
             logger: {
-                name: "Error",
-                data: "This is fun stuff!",
+                name: "event",
+                data: "This is good news!",
             }
         };
 
@@ -59,7 +59,7 @@
             body: JSON.stringify(payload),
         };
 
-        fetch("http:\/\/localhost:8082/log", body)
+        fetch("http:\/\/localhost:8080/handle", body)
             .then(res => res.json())
             .then(data => {
                 sent.innerHTML = JSON.stringify(payload, null, 4);
