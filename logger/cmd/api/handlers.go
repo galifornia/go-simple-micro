@@ -31,7 +31,7 @@ func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
 
 	response := jsonResponse{
 		Error:   false,
-		Message: "logger",
+		Message: "Message was succesfully logged in MongoDB!",
 	}
 
 	app.writeJSON(w, http.StatusAccepted, response)
