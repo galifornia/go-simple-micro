@@ -52,8 +52,6 @@ func (app *Config) handleSubmission(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Config) logEntry(w http.ResponseWriter, entry LoggerPayload) {
-	log.Println(entry)
-	log.Println("carallo")
 	jsonData, _ := json.MarshalIndent(entry, "", "\t") // In production shoulld be Marshal wo Indent
 	logServiceURL := "http://logger-service/log"       // !FIXME: read config from env
 
@@ -73,7 +71,7 @@ func (app *Config) logEntry(w http.ResponseWriter, entry LoggerPayload) {
 		return
 	}
 	defer response.Body.Close()
-	log.Println("ZZzzZZZ")
+
 	if response.StatusCode != http.StatusAccepted {
 		app.errorJSON(w, err)
 		return
