@@ -1,6 +1,8 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type mailMessage struct {
 	To      string `json:"to"`

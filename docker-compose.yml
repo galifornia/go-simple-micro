@@ -35,8 +35,8 @@ services:
       MAIL_DOMAIN: localhost
       MAIL_HOST: mailhog
       MAIL_PORT: 1025
-      MAIL_USERNAME: ""
-      MAIL_PASSWORD: ""
+      MAIL_USERNAME: admin
+      MAIL_PASSWORD: password
       MAIL_ENCRYPTION: none
       MAIL_FROM_NAME: Marco Polo
       MAIL_FROM: marco.polo@america.com

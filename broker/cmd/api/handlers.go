@@ -11,7 +11,7 @@ type RequestPayload struct {
 	Action string        `json:"action"`
 	Auth   AuthPayload   `json:"auth,omitempty"`
 	Logger LoggerPayload `json:"logger,omitempty"`
-	Mailer MailPayload   `json:"mailer,omitempty"`
+	Mailer MailPayload   `json:"mail,omitempty"`
 }
 
 type MailPayload struct {
@@ -83,7 +83,7 @@ func (app *Config) sendMail(w http.ResponseWriter, entry MailPayload) {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusAccepted {
-		app.errorJSON(w, err)
+		app.errorJSON(w, errors.New("something went trying to send the email through the Mail service"), response.StatusCode)
 		return
 	}
 

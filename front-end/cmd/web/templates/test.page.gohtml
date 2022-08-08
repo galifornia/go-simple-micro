@@ -9,7 +9,8 @@
 
             <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test broker</a>
             <a id="authBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test authentication</a>
-             <a id="loggerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test logging</a>
+            <a id="loggerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test logging</a>
+            <a id="mailBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Mailer</a>
 
             <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                 <span class="text-muted">Output shows here...</span>
@@ -38,9 +39,48 @@
     const brokerBtn = document.getElementById("brokerBtn");
     const authBtn = document.getElementById("authBtn");
     const loggerBtn = document.getElementById("loggerBtn");
+    const mailBtn = document.getElementById("mailBtn");
     const output = document.getElementById("output");
     const sent = document.getElementById("payload");
     const received = document.getElementById("received");
+
+    mailBtn.addEventListener("click", () => {
+        const payload = {
+            action: "mail",
+            mail: {
+                to: "marko@gmail.com",
+                from: "martinho@gmail.com",
+                subject: "Trying Mailer out!",
+                message: "This is a new message that is supposed to show up in MailHog.",
+            }
+        };
+
+        const body = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        };
+
+        fetch("http:\/\/localhost:8080/handle", body)
+            .then(res => res.json())
+            .then(data => {
+                sent.innerHTML = JSON.stringify(payload, null, 4);
+                received.innerHTML = JSON.stringify(data, null, 4);
+
+                if (data.error) {
+                     output.innerHTML +=
+                    `<br><strong>Error</strong>: ${data.message}`;
+                } else {
+                    output.innerHTML +=
+                    `<br><strong>Response from Mail service</strong>: ${data.message}`;
+                }
+            })
+            .catch(err => {
+                output.innerHTML += `<br><br>Error: ${err}`;
+            })
+    });
 
     loggerBtn.addEventListener("click", () => {
     const payload = {
