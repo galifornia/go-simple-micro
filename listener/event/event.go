@@ -9,13 +9,13 @@ type Event struct {
 
 func declareExchange(ch *amqp.Channel) error {
 	return ch.ExchangeDeclare(
-		"log_topic", // name
-		"topic",     // type
-		true,        // durable?
-		false,       // auto-deleted?
-		false,       // internal?
-		false,       // no-wait?
-		nil,         // arguments
+		"logs_topic", // name
+		"topic",      // type
+		true,         // durable?
+		false,        // auto-deleted?
+		false,        // internal?
+		false,        // no-wait?
+		nil,          // arguments
 	)
 }
 

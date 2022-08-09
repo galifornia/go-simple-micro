@@ -16,8 +16,7 @@ type Consumer struct {
 
 func NewConsumer(conn *amqp.Connection) (Consumer, error) {
 	consumer := Consumer{
-		conn:      conn,
-		queueName: "bananas",
+		conn: conn,
 	}
 
 	err := consumer.setup()

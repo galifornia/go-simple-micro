@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/galifornia/go-micro-listener/event"
+
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -19,9 +21,18 @@ func main() {
 	defer rabbitMQ.Close()
 	log.Println("Connected to RabbitMQ")
 
-	// listen for messages
-
 	// create consumer
+	log.Println("Listening & consuming RabbitMQ messages")
+	consumer, err := event.NewConsumer(rabbitMQ)
+	if err != nil {
+		panic(err)
+	}
+
+	// listen for messages
+	err = consumer.Listen([]string{"log.INFO", "log.WARNING", "log.ERROR"})
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func connect() (*amqp.Connection, error) {
