@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
+
+	"github.com/galifornia/go-micro-broker/event"
 )
 
 type RequestPayload struct {
@@ -52,7 +55,8 @@ func (app *Config) handleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.authenticate(w, payload.Auth)
 	case "logger":
-		app.logEntry(w, payload.Logger)
+		app.logEventViaRabbit(w, payload.Logger)
+		// app.logEntry(w, payload.Logger)
 	case "mail":
 		app.sendMail(w, payload.Mailer)
 	default:
@@ -168,4 +172,32 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	payload.Data = response.Data
 
 	app.writeJSON(w, http.StatusAccepted, payload)
+}
+
+func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LoggerPayload) {
+	err := app.pushToQueue(l)
+	if err != nil {
+		log.Println(err)
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "logged via RabbitMQ"
+
+	app.writeJSON(w, http.StatusAccepted, payload)
+}
+
+func (app *Config) pushToQueue(payload LoggerPayload) error {
+	emitter, err := event.NewEventEmitter(app.Rabbit)
+	if err != nil {
+		return err
+	}
+
+	j, _ := json.MarshalIndent(&payload, "", "\t")
+	err = emitter.Push(string(j), "log.INFO")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
