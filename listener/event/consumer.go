@@ -60,14 +60,14 @@ func (consumer *Consumer) Listen(topics []string) error {
 		}
 	}
 
-	messages, err := ch.Consume(q.Name, "", true, false, false, false, nil)
+	messagesChannel, err := ch.Consume(q.Name, "", true, false, false, false, nil)
 	if err != nil {
 		return err
 	}
 
 	forever := make(chan bool)
 	go func() {
-		for d := range messages {
+		for d := range messagesChannel {
 			var payload Payload
 			_ = json.Unmarshal(d.Body, &payload)
 			go handlePayload(payload)
