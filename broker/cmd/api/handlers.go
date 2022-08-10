@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"net/rpc"
 
 	"github.com/galifornia/go-micro-broker/event"
 )
@@ -55,7 +56,8 @@ func (app *Config) handleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.authenticate(w, payload.Auth)
 	case "logger":
-		app.logEventViaRabbit(w, payload.Logger)
+		app.logItemViaRPC(w, payload.Logger)
+		// app.logEventViaRabbit(w, payload.Logger)
 		// app.logEntry(w, payload.Logger)
 	case "mail":
 		app.sendMail(w, payload.Mailer)
@@ -199,5 +201,38 @@ func (app *Config) pushToQueue(payload LoggerPayload) error {
 		return err
 	}
 
+	return nil
+}
+
+type RPCPayload struct {
+	Name string
+	Data string
+}
+
+func (app *Config) logItemViaRPC(w http.ResponseWriter, p LoggerPayload) error {
+	client, err := rpc.Dial("tcp", "logger-service:5001")
+	if err != nil {
+		app.errorJSON(w, err)
+		return err
+	}
+
+	rpcPayload := RPCPayload{
+		Name: p.Name,
+		Data: p.Data,
+	}
+
+	result := ""
+	err = client.Call("RPCServer.LogInfo", rpcPayload, &result)
+	if err != nil {
+		app.errorJSON(w, err)
+		return err
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Message: result,
+	}
+
+	app.writeJSON(w, http.StatusAccepted, payload)
 	return nil
 }
