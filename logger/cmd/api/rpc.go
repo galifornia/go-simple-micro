@@ -22,6 +22,7 @@ func (r *RPCServer) LogInfo(payload RPCPayload, resp *string) error {
 		Name:      payload.Name,
 		Data:      payload.Data,
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	})
 	if err != nil {
 		log.Println(err)
